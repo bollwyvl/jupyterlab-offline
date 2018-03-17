@@ -11,9 +11,11 @@ build:
   number: 999
   script:
     - pushd buildutils
-    - nodejs ../jupyterlab/staging/yarn.js build
+    - node ../jupyterlab/staging/yarn.js
+    - node ../jupyterlab/staging/yarn.js build
     - popd
-    - nodejs jupyterlab/staging/yarn.js build:update
+    - node jupyterlab/staging/yarn.js
+    - node jupyterlab/staging/yarn.js build:update
     - python -m pip install --no-deps --ignore-installed .
   entry_points:
     - jupyter-lab = jupyterlab.labapp:main

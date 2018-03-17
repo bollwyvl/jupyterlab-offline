@@ -2,10 +2,21 @@ name: jupyterlab-offline
 
 commands:
   build:
-    description: build all of the local hacked packages
+    description: build everything
     env_spec: _dev
-    unix: conda build -c conda-forge conda.recipes/jupyterlab && conda build -c conda-forge
-      conda.recipes/jupyterlab-offline && conda build -c conda-forge && conda.recipes/jupyterlab-offline-jupyter-widgets-jupyterlab-manager
+    unix: anaconda-project run build:lab && anaconda-project run build:offline && anaconda-project run build:ext  
+  build:lab:
+    description: build the hacked local jupyterlab package
+    env_spec: _dev
+    unix: conda-build -c conda-forge conda.recipes/jupyterlab
+  build:offline:
+    description: build the offline lab package
+    env_spec: _dev
+    unix: conda build -c conda-forge conda.recipes/jupyterlab-offline
+  build:ext:
+    description: build the offline labextension packages
+    env_spec: _dev
+    unix: conda build -c conda-forge  conda.recipes/jupyterlab-offline-jupyter-widgets-jupyterlab-manager
       && conda build -c conda-forge conda.recipes/jupyterlab-offline-bqplot
   lab:
     description: run lab as installed
@@ -24,6 +35,7 @@ env_specs:
     packages:
     - python >=3.6,<3.7
     - conda-build ==2.1.8
+    - diffoscope
 
   _lab:
     packages:
