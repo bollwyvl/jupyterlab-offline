@@ -1,0 +1,63 @@
+name: jupyterlab-offline
+
+commands:
+  build:
+    description: build all of the local hacked packages
+    env_spec: _dev
+    unix: conda build -c conda-forge conda.recipes/jupyterlab && conda build -c conda-forge
+      conda.recipes/jupyterlab-offline && conda build -c conda-forge && conda.recipes/jupyterlab-offline-jupyter-widgets-jupyterlab-manager
+      && conda build -c conda-forge conda.recipes/jupyterlab-offline-bqplot
+  lab:
+    description: run lab as installed
+    unix: jupyter lab --no-browser --debug
+    env_spec: user
+
+channels:
+- conda-forge
+- defaults
+
+env_specs:
+  _dev:
+    inherit_from:
+    - _lab
+    - _py
+    packages:
+    - python >=3.6,<3.7
+    - conda-build ==2.1.8
+
+  _lab:
+    packages:
+      - jupyterlab ==0.31.12
+
+  _py:
+    packages:
+      - python >=3.6,<3.7
+
+  user:
+    channels:
+    - ./envs/default/conda-bld
+    - conda-forge
+    - defaults
+    inherit_from:
+    - _lab
+    - _py
+
+  user-offline:
+    inherit_from:
+    - user
+    packages:
+    - jupyterlab-offline
+
+  user-widgets:
+    inherit_from:
+    - user-offline
+    packages:
+    - jupyterlab-offline-jupyter-widgets-jupyterlab-manager
+
+  user-bqplot:
+    inherit_from:
+    - user-widgets
+    packages:
+    - jupyterlab-offline-bqplot
+skip_imports:
+  environment: f76a74a4c26dff0fa9cbb82199295495b68b87ba

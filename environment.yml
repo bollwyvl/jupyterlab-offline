@@ -1,0 +1,8 @@
+name: jupyterlab-offline
+
+channels:
+  - defaults
+
+dependencies:
+  - anaconda-project
+  - python >=3.6,<3.7
