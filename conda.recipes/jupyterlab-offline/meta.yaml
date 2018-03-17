@@ -1,0 +1,31 @@
+{% set name = "jupyterlab-offline" %}
+{% set version = "0.31.12" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+build:
+  number: 0
+  script:
+    - pushd {{ PREFIX }}/lib/python{{ PY_VER }}/site-packages/jupyterlab/staging
+    - echo 'yarn-offline-mirror "../offline"' >> .yarnrc
+    - popd
+    - jupyter lab build
+    - cd {{ PREFIX }}/share/jupyter/lab
+    - mkdir -p lockfiles
+    - cp staging/yarn.lock lockfiles/{{ name }}-{{ version }}.lock
+    - rm -rf {{ PREFIX }}/share/jupyter/lab/{staging,static}
+
+requirements:
+  build:
+    - jupyterlab {{ version }}
+    - nodejs
+    - python
+  run:
+    - jupyterlab {{ version }}
+
+about:
+  home: https://github.com/jupyterlab/jupyterlab
+  license: BSD 3-Clause
+  summary: (Re)build JupyterLab without a network connection

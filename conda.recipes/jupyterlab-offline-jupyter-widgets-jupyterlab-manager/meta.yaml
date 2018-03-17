@@ -1,0 +1,30 @@
+{% set name = "jupyterlab-offline-jupyter-widgets-jupyterlab-manager" %}
+{% set version = "0.33.2" %}
+{% set jlab_min = "0.31" %}
+{% set jlab_max = "0.32" %}
+
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+build:
+  number: 0
+  script:
+    - jupyter labextension install "@jupyter-widgets/jupyterlab-manager@{{ version }}"
+    - cd {{ PREFIX }}/share/jupyter/lab
+    - cp staging/yarn.lock lockfiles/{{ name }}-{{ version }}.lock
+    - rm -rf {{ PREFIX }}/share/jupyter/lab/{staging,static}
+
+requirements:
+  build:
+    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
+    - nodejs
+    - python
+  run:
+    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
+
+about:
+  home: https://github.com/jupyter-widgets/ipywidgets
+  license: BSD 3-Clause
+  summary: Offline assets for building Jupyter Widgets for JupyterLab

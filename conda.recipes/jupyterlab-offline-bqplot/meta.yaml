@@ -1,0 +1,28 @@
+{% set name = "jupyterlab-offline-bqplot" %}
+{% set version = "0.3.6" %}
+{% set jwm_min = "0.33.2" %}
+{% set jwm_max = "0.34" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+build:
+  number: 0
+  script:
+    - jupyter labextension install "bqplot@{{ version }}"
+    - cp {{ PREFIX }}/share/jupyter/lab/staging/yarn.lock  {{ PREFIX }}/share/jupyter/lab/lockfiles/{{ name }}-{{ version }}.lock
+    - rm -rf {{ PREFIX }}/share/jupyter/lab/{staging,static}
+
+requirements:
+  build:
+    - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
+    - nodejs
+    - python
+  run:
+    - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
+
+about:
+  home: https://github.com/bloomberg/bqplot
+  license: Apache-2.0
+  summary: Offline assets for building bqplot for JupyterLab
