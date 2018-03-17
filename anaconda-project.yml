@@ -4,7 +4,7 @@ commands:
   build:
     description: build everything
     env_spec: _dev
-    unix: anaconda-project run build:lab && anaconda-project run build:offline && anaconda-project run build:ext  
+    unix: anaconda-project run build:lab && anaconda-project run build:offline && anaconda-project run build:ext
   build:lab:
     description: build the hacked local jupyterlab package
     env_spec: _dev
@@ -36,6 +36,7 @@ env_specs:
     - python >=3.6,<3.7
     - conda-build ==2.1.8
     - diffoscope
+    - pandas
 
   _lab:
     packages:
