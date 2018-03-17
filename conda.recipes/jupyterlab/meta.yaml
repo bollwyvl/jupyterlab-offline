@@ -1,0 +1,47 @@
+{% set version = "0.31.12" %}
+
+package:
+  name: jupyterlab
+  version: {{ version }}
+
+source:
+  path: ../../jupyterlab
+
+build:
+  number: 999
+  script:
+    - jlpm run build:update
+    - python -m pip install --no-deps --ignore-installed .
+  entry_points:
+    - jupyter-lab = jupyterlab.labapp:main
+    - jupyter-labextension = jupyterlab.labextensions:main
+    - jupyter-labhub = jupyterlab.labhubapp:main
+
+requirements:
+  build:
+    - nodejs
+    - notebook >=4.3
+    - pip
+    - pytest
+    - python
+  run:
+    - python
+    - jupyterlab_launcher >=0.10.0,<0.11.0
+    - notebook >=4.3
+    - futures  # [py27]
+    - subprocess32   # [py2k and unix]
+test:
+  imports:
+    - jupyterlab
+
+about:
+  home: https://github.com/jupyterlab/jupyterlab
+  license: BSD 3-Clause
+  license_file: LICENSE
+  summary: A pre-alpha version of a computational environment for Jupyter.
+
+extra:
+  recipe-maintainers:
+    - jasongrout
+    - blink1073
+    - jochym
