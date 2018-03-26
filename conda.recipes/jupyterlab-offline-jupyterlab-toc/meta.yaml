@@ -11,7 +11,7 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline archive --extension "jupyterlab-toc@{{ version }}" --name jupyterlab=toc
+    - jupyter-laboffline archive --extension "jupyterlab-toc@{{ version }}" --name jupyterlab-toc
 
 test:
   commands:
