@@ -12,9 +12,14 @@ build:
   number: 0
   script:
     - python -m pip install --no-deps --ignore-installed .
-    - python -m jupyterlab_offline.labofflineapp
+    - python -m jupyterlab_offline.labofflineapp archive
   entry_points:
     - jupyter-laboffline = jupyterlab_offline.labofflineapp:main
+
+test:
+  commands:
+    - jupyter-laboffline build
+    - jupyter-labextension list
 
 requirements:
   build:

@@ -14,7 +14,12 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline --extension "ipyvolume@{{ version }}" --name ipyvolume
+    - jupyter-laboffline archive --extension "ipyvolume@{{ version }}" --name ipyvolume
+
+test:
+  commands:
+    - jupyter-laboffline build
+    - jupyter-labextension list
 
 requirements:
   build:

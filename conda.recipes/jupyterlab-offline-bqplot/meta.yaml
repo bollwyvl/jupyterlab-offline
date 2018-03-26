@@ -14,7 +14,12 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline --extension "bqplot@{{ version }}" --name bqplot
+    - jupyter-laboffline archive --extension "bqplot@{{ version }}" --name bqplot
+
+test:
+  commands:
+    - jupyter-laboffline build
+    - jupyter-labextension list
 
 requirements:
   build:

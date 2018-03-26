@@ -14,7 +14,12 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline --extension "jupyter-threejs@{{ version }}" --name jupyter-threejs
+    - jupyter-laboffline archive --extension "jupyter-threejs@{{ version }}" --name jupyter-threejs
+
+test:
+  commands:
+    - jupyter-laboffline build
+    - jupyter-labextension list
 
 requirements:
   build:

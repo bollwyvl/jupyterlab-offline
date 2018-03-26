@@ -1,24 +1,24 @@
 from jupyter_core.application import JupyterApp, base_aliases
 from traitlets import Unicode, Bool
 
-from .commands import do_the_thing
+from . import commands
 
 version = "0.1.0"
 
-offline_aliases = dict(base_aliases)
-offline_aliases["app-dir"] = "LabOfflineApp.app_dir"
-offline_aliases["extension"] = "LabOfflineApp.extension"
-offline_aliases["name"] = "LabOfflineApp.name"
-offline_aliases["clean"] = "LabOfflineApp.clean"
+dependency_aliases = dict(base_aliases)
+dependency_aliases["app-dir"] = "OfflineDependenciesApp.app_dir"
+dependency_aliases["extension"] = "OfflineDependenciesApp.extension"
+dependency_aliases["name"] = "OfflineDependenciesApp.name"
+dependency_aliases["clean"] = "OfflineDependenciesApp.clean"
 
 
-class LabOfflineApp(JupyterApp):
+class OfflineDependenciesApp(JupyterApp):
     version = version
     description = """
-    Utilities for offline JupyterLab building
+    Store an npm-installable extension and its dependencies
     """
 
-    aliases = offline_aliases
+    aliases = dependency_aliases
 
     app_dir = Unicode(
         None,
@@ -51,10 +51,51 @@ class LabOfflineApp(JupyterApp):
             clean_=self.clean,
             logger=self.log
         )
-        do_the_thing(**kwargs)
+        commands.archive_extension(**kwargs)
 
 
-main = launch_new_instance = LabOfflineApp.launch_instance
+build_aliases = dict(base_aliases)
+build_aliases["app-dir"] = "OfflineBuildApp.app_dir"
+
+
+class OfflineBuildApp(JupyterApp):
+    version = version
+    description = """
+    Use a populated offline folder to perform an offline build
+    """
+
+    aliases = build_aliases
+
+    app_dir = Unicode(
+        None,
+        config=True,
+        allow_none=True,
+        help="The app directory to build in")
+
+    def start(self):
+        kwargs = dict(
+            app_dir=self.app_dir,
+        )
+        commands.build(**kwargs)
+
+
+class OfflineApp(JupyterApp):
+    version = version
+    description = """
+    Utilities for offline JupyterLab building
+    """
+
+    subcommands = dict(
+        archive=(
+            OfflineDependenciesApp,
+            OfflineDependenciesApp.description.splitlines()[0]),
+        build=(
+            OfflineBuildApp,
+            OfflineBuildApp.description.splitlines()[0]),
+    )
+
+
+main = launch_new_instance = OfflineApp.launch_instance
 
 if __name__ == '__main__':
     main()

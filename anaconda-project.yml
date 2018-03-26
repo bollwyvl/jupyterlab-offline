@@ -125,5 +125,16 @@ env_specs:
     - user-widgets
     packages:
     - jupyterlab-offline-bqplot
+
+  user-sink:
+    inherit_from:
+    - user-widgets
+    packages:
+    - jupyterlab-offline-bqplot
+    - jupyterlab-offline-ipyvolume
+    - jupyterlab-offline-jupyter-leaflet
+    - jupyterlab-offline-jupyter-threejs
+    - jupyterlab-offline-jupyterlab-toc
+
 skip_imports:
   environment: f76a74a4c26dff0fa9cbb82199295495b68b87ba

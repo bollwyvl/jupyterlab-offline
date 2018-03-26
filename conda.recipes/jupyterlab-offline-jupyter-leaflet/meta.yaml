@@ -14,7 +14,12 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline --extension "jupyter-leaflet@{{ version }}" --name jupyter-leaflet
+    - jupyter-laboffline archive --extension "jupyter-leaflet@{{ version }}" --name jupyter-leaflet
+
+test:
+  commands:
+    - jupyter-laboffline build
+    - jupyter-labextension list
 
 requirements:
   build:

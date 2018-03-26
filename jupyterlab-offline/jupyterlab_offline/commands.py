@@ -13,8 +13,29 @@ def get_offline_dir(app_dir=None):
     return join(app_dir or commands.get_app_dir(), "offline")
 
 
-def do_the_thing(extension_package=None, extension_name=None, app_dir=None,
-                 logger=None, clean_=True):
+def build(app_dir=None, logger=None):
+    app_dir = app_dir or commands.get_app_dir()
+    kw = dict(app_dir=app_dir, logger=logger)
+
+    if logger:
+        offline_extensions = list(glob(join(app_dir, "offline", "extensions")))
+        logger.warn(
+            "%s Attempting offline build for core and %s extensions:\n%s",
+            log_prefix,
+            len(offline_extensions),
+            offline_extensions
+        )
+
+    populate_staging(offline=True, **kw)
+    raw_install(offline=True, **kw)
+    build_output = raw_build(**kw)
+
+    if logger:
+        logger.warn("%s Build success\n%s", log_prefix, build_output[-500:])
+
+
+def archive_extension(extension_package=None, extension_name=None,
+                      app_dir=None, logger=None, clean_=True):
     app_dir = app_dir or commands.get_app_dir()
     kw = dict(app_dir=app_dir, logger=logger)
 
@@ -49,21 +70,22 @@ def do_the_thing(extension_package=None, extension_name=None, app_dir=None,
 
     raw_install(**kw)
     after = record_packages(**kw)
-    archive(extension_name=extension_name,
-            before=before,
-            after=after,
-            **kw)
+    _archive(extension_name=extension_name,
+             before=before,
+             after=after,
+             **kw)
     if clean_:
         clean(**kw)
 
 
-def populate_staging(app_dir=None, logger=None):
+def populate_staging(offline=False, app_dir=None, logger=None):
     app_dir = app_dir or commands.get_app_dir()
     kw = dict(app_dir=app_dir, logger=logger)
-    commands.build(**kw)
+    handler = commands._AppHandler(app_dir, logger)
+    handler._populate_staging()
     patch_yarnrc(**kw)
     merge_mirrors(**kw)
-    merge_lockfiles(**kw)
+    merge_lockfiles(offline=offline, **kw)
 
 
 def merge_mirrors(app_dir=None, logger=None):
@@ -83,7 +105,7 @@ def merge_mirrors(app_dir=None, logger=None):
                 pass
 
 
-def merge_lockfiles(app_dir=None, logger=None):
+def merge_lockfiles(app_dir=None, logger=None, offline=False):
     """ Make $APP_DIR/yarn.lock the merged state of all installed extensions
     """
     app_dir = app_dir or commands.get_app_dir()
@@ -108,7 +130,8 @@ def merge_lockfiles(app_dir=None, logger=None):
         shutil.copy2(lockfiles[0], staging)
 
         if len(lockfiles) > 1:
-            for i, lockfile in enumerate(lockfiles[1:]):
+            shutil.copy2(lockfiles[1], staging)
+            for i, lockfile in enumerate(lockfiles[2:]):
                 if logger:
                     logger.warn(
                         "%s %s/%s: [%s]",
@@ -127,7 +150,10 @@ def merge_lockfiles(app_dir=None, logger=None):
                                      log_prefix)
 
                 # trigger the conflict resolution and verify install
-                raw_install(app_dir=app_dir, logger=logger)
+                if logger:
+                    logger.warn("%s Attempting to fix %s...",
+                                log_prefix, basename(dirname(lockfile)))
+                raw_install(app_dir=app_dir, logger=logger, offline=offline)
                 with open(staging) as fp:
                     staging_content = fp.read()
                 assert ">>>>" not in staging_content, """{} Unresolved conflict
@@ -180,17 +206,24 @@ def raw_build(app_dir=None, logger=None):
     )
 
 
-def raw_install(app_dir=None, logger=None):
+def raw_install(app_dir=None, logger=None, offline=False):
     app_dir = app_dir or commands.get_app_dir()
     if logger:
         logger.warn("%s cleaning %s/staging/node_modules",
                     log_prefix, app_dir)
-    shutil.rmtree(join(app_dir, "staging", "node_modules"))
+    try:
+        shutil.rmtree(join(app_dir, "staging", "node_modules"))
+    except Exception as err:
+        pass
     if logger:
         logger.warn("%s Running raw jlpm in %s/staging",
                     log_prefix, app_dir)
 
     args = []
+
+    if offline:
+        args += ["--offline"]
+
     return subprocess.check_output(
         ["jlpm"] + args,
         cwd=join(app_dir, "staging"))
@@ -214,8 +247,9 @@ def install_extension(extension_package=None, app_dir=None, logger=None):
                                           logger=logger)
 
 
-def archive(extension_name, before=[], after=[], app_dir=None, logger=None):
-    """bring along just those packages that were not present before
+def _archive(extension_name, before=[], after=[], app_dir=None, logger=None):
+    """ Bring along just those packages that were not present before
+        and the lockfile
     """
     app_dir = app_dir or commands.get_app_dir()
     if extension_name:
@@ -227,12 +261,14 @@ def archive(extension_name, before=[], after=[], app_dir=None, logger=None):
         ext_path = abspath(join(app_dir, "offline", "base"))
 
     if logger:
-        msg = ("""%s Archiving %s unique package(s) for %s"""
+        msg = ("""%s Archiving %s unique package(s) for [%s]"""
                """ (before: %s, after: %s)""")
         logger.warn(
             msg,
             log_prefix,
-            len(packages), extension_name, len(before), len(after)
+            len(packages),
+            extension_name or "BASELINE",
+            len(before), len(after)
         )
 
     ext_npm = join(ext_path, "npm")
@@ -246,10 +282,10 @@ def archive(extension_name, before=[], after=[], app_dir=None, logger=None):
                  join(ext_path, "yarn.lock"))
 
     if logger:
-        logger.warn("%s Copying %s unique dependencies to %s...",
+        logger.warn("%s Copying %s unique dependencies to [%s]...",
                     log_prefix,
                     len(packages),
-                    ext_npm)
+                    basename(dirname(ext_npm)))
     [
         shutil.copy2(package, join(ext_npm, basename(package)))
         for package in packages

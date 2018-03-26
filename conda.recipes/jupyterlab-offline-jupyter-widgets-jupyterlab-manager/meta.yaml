@@ -11,7 +11,12 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline --extension "@jupyter-widgets/jupyterlab-manager@{{ version }}" --name jupyter-widgets-jupyterlab-manager
+    - jupyter-laboffline archive --extension "@jupyter-widgets/jupyterlab-manager@{{ version }}" --name jupyter-widgets-jupyterlab-manager
+
+test:
+  commands:
+    - jupyter-laboffline build
+    - jupyter-labextension list
 
 requirements:
   build:
