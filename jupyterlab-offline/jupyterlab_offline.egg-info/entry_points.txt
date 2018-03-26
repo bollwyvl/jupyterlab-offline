@@ -1,3 +1,0 @@
-[console_scripts]
-jupyter-laboffline = jupyterlab_offline.labofflineapp:main
-
