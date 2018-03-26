@@ -31,7 +31,7 @@ def do_the_thing(extension_package=None, extension_name=None, app_dir=None,
     if logger:
         logger.warn("%s Running bog-standard build in %s", log_prefix, app_dir)
 
-    populate_staging(build_first=extension_package is None, **kw)
+    populate_staging(**kw)
 
     if extension_package:
         raw_install(**kw)
@@ -42,7 +42,7 @@ def do_the_thing(extension_package=None, extension_name=None, app_dir=None,
                         extension_name or "BASELINE")
             logger.warn("%s Installing %s", log_prefix, extension_package)
         install_extension(extension_package, **kw)
-        populate_staging(build_first=True, **kw)
+        populate_staging(**kw)
     else:
         stage_baseline_yarn_lock(**kw)
         before = []
@@ -57,11 +57,10 @@ def do_the_thing(extension_package=None, extension_name=None, app_dir=None,
         clean(**kw)
 
 
-def populate_staging(build_first=False, app_dir=None, logger=None):
+def populate_staging(app_dir=None, logger=None):
     app_dir = app_dir or commands.get_app_dir()
     kw = dict(app_dir=app_dir, logger=logger)
-    if build_first:
-        commands.build(**kw)
+    commands.build(**kw)
     patch_yarnrc(**kw)
     merge_mirrors(**kw)
     merge_lockfiles(**kw)
@@ -81,9 +80,7 @@ def merge_mirrors(app_dir=None, logger=None):
             try:
                 shutil.copy2(tgz, join(staging, basename(tgz)))
             except Exception:
-                if logger:
-                    logger.error("%s WHATEVER %s %s",
-                                 log_prefix, basename(ext), tgz)
+                pass
 
 
 def merge_lockfiles(app_dir=None, logger=None):
@@ -140,14 +137,17 @@ def merge_lockfiles(app_dir=None, logger=None):
 def patch_yarnrc(app_dir=None, logger=None):
     extra = """yarn-offline-mirror "./offline"\n"""
     app_dir = app_dir or commands.get_app_dir()
-    with open(join(app_dir, "staging", ".yarnrc")) as fp:
-        yarnrc = fp.read()
+    yarnrc_path = join(app_dir, "staging", ".yarnrc")
+    yarnrc = ""
+    if exists(yarnrc_path):
+        with open(yarnrc_path) as fp:
+            yarnrc = fp.read()
 
     if extra not in yarnrc:
         if logger:
             logger.warn("%s patching yarnrc...", log_prefix)
         content = "{}\n# added by jupyterlab-offline\n{}".format(yarnrc, extra)
-        with open(join(app_dir, "staging", ".yarnrc"), "w") as fp:
+        with open(yarnrc_path, "w") as fp:
             fp.write(content)
         if logger:
             logger.warn("%s wrote yarnrc\n%s", log_prefix, content)

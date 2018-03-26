@@ -1,0 +1,29 @@
+{% set name = "jupyterlab-offline-jupyterlab-toc" %}
+{% set version = "0.1.0" %}
+{% set jlab_min = "0.31" %}
+{% set jlab_max = "0.32" %}
+
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+build:
+  number: 0
+  script:
+    - jupyter-laboffline --extension jupyterlab-toc{{ version }}" --name jupyterlab=toc
+
+requirements:
+  build:
+    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
+    - nodejs
+    - python
+  run:
+    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
+    - nodejs
+    - python
+
+about:
+  home: https://github.com/ian-r-rose/jupyterlab-toc
+  license: BSD-3-Clause
+  summary: Offline assets for building jupyterlab-toc for JupyterLab

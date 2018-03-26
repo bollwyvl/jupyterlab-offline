@@ -9,7 +9,8 @@ commands:
   build:
     description: build everything
     env_spec: _dev
-    unix: anaconda-project run build:lab && anaconda-project run build:offline && anaconda-project run build:ext
+    unix: anaconda-project run build:offline && anaconda-project run build:ext
+    # anaconda-project run build:lab &&
 
   build:lab:
     description: build the hacked local jupyterlab package
@@ -30,6 +31,7 @@ commands:
       && conda build -c conda-forge jupyterlab-offline-ipyvolume
       && conda build -c conda-forge jupyterlab-offline-jupyter-threejs
       && conda build -c conda-forge jupyterlab-offline-jupyter-leaflet
+      && conda build -c conda-forge jupyterlab-offline-jupyterlab-toc
 
   build:noarch:
     description: fix up the _dev/conda-bld to squelch errors
@@ -74,6 +76,7 @@ env_specs:
     packages:
     - conda-build ==2.1.8
     - python >=3.6,<3.7
+    - anaconda-project
 
   _hack:
     inherit_from:
