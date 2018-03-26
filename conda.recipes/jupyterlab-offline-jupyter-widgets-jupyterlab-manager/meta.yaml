@@ -11,10 +11,7 @@ package:
 build:
   number: 0
   script:
-    - jupyter labextension install "@jupyter-widgets/jupyterlab-manager@{{ version }}"
-    - cd {{ PREFIX }}/share/jupyter/lab
-    - cp staging/yarn.lock lockfiles/{{ name }}-{{ version }}.lock
-    - rm -rf {{ PREFIX }}/share/jupyter/lab/{staging,static}
+    - jupyter laboffline --extension "@jupyter-widgets/jupyterlab-manager@{{ version }}" --name jupyter-widgets-jupyterlab-manager
 
 requirements:
   build:
@@ -23,6 +20,8 @@ requirements:
     - python
   run:
     - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
+    - nodejs
+    - python
 
 about:
   home: https://github.com/jupyter-widgets/ipywidgets

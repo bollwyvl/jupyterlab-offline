@@ -5,17 +5,16 @@ package:
   name: {{ name }}
   version: {{ version }}
 
+source:
+  path: ../../jupyterlab-offline
+
 build:
   number: 0
   script:
-    - pushd {{ PREFIX }}/lib/python{{ PY_VER }}/site-packages/jupyterlab/staging
-    - echo 'yarn-offline-mirror "../offline"' >> .yarnrc
-    - popd
-    - jupyter lab build
-    - cd {{ PREFIX }}/share/jupyter/lab
-    - mkdir -p lockfiles
-    - cp staging/yarn.lock lockfiles/{{ name }}-{{ version }}.lock
-    - rm -rf {{ PREFIX }}/share/jupyter/lab/{staging,static}
+    - python -m pip install --no-deps --ignore-installed .
+    - jupyter laboffline
+  entry_points:
+    - jupyter-laboffline = jupyterlab_offline.labofflineapp:main
 
 requirements:
   build:

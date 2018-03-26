@@ -22,6 +22,36 @@ commands:
     description: run lab as installed
     unix: jupyter lab --no-browser --debug
     env_spec: user
+  noarch:
+    description: fix up the _dev/conda-bld to squelch errors
+    unix: >
+      mkdir -p $CONDA_PREFIX/conda-bld/noarch && echo '{"info": {}, "packages": {}}' > $CONDA_PREFIX/conda-bld/noarch/repodata.json
+    env_spec: _dev
+  pretest:setup:
+    env_spec: _dev
+    unix: cd jupyterlab-offline && pip install -e . --no-deps --ignore-installed
+  test:offline-base:
+    env_spec: _dev
+    unix: jupyter laboffline
+  test:offline-widgets:
+    env_spec: _dev
+    unix: jupyter laboffline --extension="@jupyter-widgets/jupyterlab-manager" --name="jupyter-widgets-jupyterlab-manager"
+  test:offline-bqplot:
+    env_spec: _dev
+    unix: jupyter laboffline --extension="bqplot" --name="bqplot"
+  test:offline-pythreejs:
+    env_spec: _dev
+    unix: jupyter laboffline --extension="jupyter-threejs" --name="jupyter-threejs"
+  test:offline-ipyvolume:
+    env_spec: _dev
+    unix: jupyter laboffline --extension="ipyvolume" --name="ipyvolume"
+  posttest:teardown:
+    env_spec: _dev
+    unix: rm -rf ${CONDA_PREFIX}/share/jupyter
+  test:
+    env_spec: _dev
+    unix: anaconda-project run posttest:teardown && anaconda-project run pretest:setup && anaconda-project run test:offline-base && anaconda-project run test:offline-widgets && anaconda-project run test:offline-bqplot
+
 
 channels:
 - conda-forge
@@ -33,10 +63,14 @@ env_specs:
     - _lab
     - _py
     packages:
-    - python >=3.6,<3.7
     - conda-build ==2.1.8
     - diffoscope
+    - hypothesis
     - pandas
+    - python >=3.6,<3.7
+    - nodejs
+    - anaconda-project
+    - sh
 
   _lab:
     packages:
