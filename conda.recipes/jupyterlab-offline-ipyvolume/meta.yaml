@@ -14,7 +14,7 @@ package:
 build:
   number: 0
   script:
-    - jupyter laboffline --extension "ipyvolume@{{ version }}" --name ipyvolume
+    - jupyter-laboffline --extension "ipyvolume@{{ version }}" --name ipyvolume
 
 requirements:
   build:

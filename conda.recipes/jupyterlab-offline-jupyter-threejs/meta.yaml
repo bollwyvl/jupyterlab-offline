@@ -14,7 +14,7 @@ package:
 build:
   number: 0
   script:
-    - jupyter laboffline --extension "jupyter-threejs@{{ version }}" --name jupyter-threejs
+    - jupyter-laboffline --extension "jupyter-threejs@{{ version }}" --name jupyter-threejs
 
 requirements:
   build:

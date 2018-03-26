@@ -1,5 +1,5 @@
 from jupyter_core.application import JupyterApp, base_aliases
-from traitlets import Unicode
+from traitlets import Unicode, Bool
 
 from .commands import do_the_thing
 
@@ -9,6 +9,7 @@ offline_aliases = dict(base_aliases)
 offline_aliases["app-dir"] = "LabOfflineApp.app_dir"
 offline_aliases["extension"] = "LabOfflineApp.extension"
 offline_aliases["name"] = "LabOfflineApp.name"
+offline_aliases["clean"] = "LabOfflineApp.clean"
 
 
 class LabOfflineApp(JupyterApp):
@@ -37,11 +38,17 @@ class LabOfflineApp(JupyterApp):
         config=True,
         help="An on-disk friendly name derived from the extension")
 
+    clean = Bool(
+        True,
+        config=True,
+        help="Whether to clean contentious directories after build")
+
     def start(self):
         kwargs = dict(
             app_dir=self.app_dir,
             extension_name=self.name,
             extension_package=self.extension,
+            clean_=self.clean,
             logger=self.log
         )
         do_the_thing(**kwargs)

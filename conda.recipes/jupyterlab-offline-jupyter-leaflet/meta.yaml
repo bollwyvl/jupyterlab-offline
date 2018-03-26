@@ -1,5 +1,5 @@
-{% set name = "jupyterlab-offline-bqplot" %}
-{% set version = "0.3.6" %}
+{% set name = "jupyterlab-offline-jupyter-leaflet" %}
+{% set version = "0.7.3" %}
 
 {% set jlab_min = "0.31" %}
 {% set jlab_max = "0.32" %}
@@ -14,7 +14,7 @@ package:
 build:
   number: 0
   script:
-    - jupyter-laboffline --extension "bqplot@{{ version }}" --name bqplot
+    - jupyter-laboffline --extension "jupyter-leaflet@{{ version }}" --name jupyter-leaflet
 
 requirements:
   build:
@@ -27,6 +27,6 @@ requirements:
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
 
 about:
-  home: https://github.com/bloomberg/bqplot
-  license: Apache-2.0
-  summary: Offline assets for building bqplot for JupyterLab
+  home: https://github.com/ellisonbg/ipyleaflet
+  license: MIT
+  summary: Offline assets for building jupyter-leaflet for JupyterLab

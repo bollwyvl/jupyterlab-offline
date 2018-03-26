@@ -1,57 +1,66 @@
 name: jupyterlab-offline
 
 commands:
-  build:
-    description: build everything
-    env_spec: _dev
-    unix: anaconda-project run build:lab && anaconda-project run build:offline && anaconda-project run build:ext
-  build:lab:
-    description: build the hacked local jupyterlab package
-    env_spec: _dev
-    unix: conda-build -c conda-forge conda.recipes/jupyterlab
-  build:offline:
-    description: build the offline lab package
-    env_spec: _dev
-    unix: conda build -c conda-forge conda.recipes/jupyterlab-offline
-  build:ext:
-    description: build the offline labextension packages
-    env_spec: _dev
-    unix: conda build -c conda-forge  conda.recipes/jupyterlab-offline-jupyter-widgets-jupyterlab-manager
-      && conda build -c conda-forge conda.recipes/jupyterlab-offline-bqplot
   lab:
     description: run lab as installed
     unix: jupyter lab --no-browser --debug
     env_spec: user
-  noarch:
+
+  build:
+    description: build everything
+    env_spec: _dev
+    unix: anaconda-project run build:lab && anaconda-project run build:offline && anaconda-project run build:ext
+
+  build:lab:
+    description: build the hacked local jupyterlab package
+    env_spec: _dev
+    unix: conda-build -c conda-forge conda.recipes/jupyterlab
+
+  build:offline:
+    description: build the offline lab package
+    env_spec: _dev
+    unix: conda build -c conda-forge conda.recipes/jupyterlab-offline
+
+  build:ext:
+    description: build the offline labextension packages
+    env_spec: _dev
+    unix: cd conda.recipes
+      && conda build -c conda-forge  jupyterlab-offline-jupyter-widgets-jupyterlab-manager
+      && conda build -c conda-forge jupyterlab-offline-bqplot
+      && conda build -c conda-forge jupyterlab-offline-ipyvolume
+      && conda build -c conda-forge jupyterlab-offline-jupyter-threejs
+      && conda build -c conda-forge jupyterlab-offline-jupyter-leaflet
+
+  build:noarch:
     description: fix up the _dev/conda-bld to squelch errors
     unix: >
       mkdir -p $CONDA_PREFIX/conda-bld/noarch && echo '{"info": {}, "packages": {}}' > $CONDA_PREFIX/conda-bld/noarch/repodata.json
     env_spec: _dev
+
   pretest:setup:
-    env_spec: _dev
+    env_spec: _hack
     unix: cd jupyterlab-offline && pip install -e . --no-deps --ignore-installed
   test:offline-base:
-    env_spec: _dev
+    env_spec: _hack
     unix: jupyter laboffline
   test:offline-widgets:
-    env_spec: _dev
+    env_spec: _hack
     unix: jupyter laboffline --extension="@jupyter-widgets/jupyterlab-manager" --name="jupyter-widgets-jupyterlab-manager"
   test:offline-bqplot:
-    env_spec: _dev
+    env_spec: _hack
     unix: jupyter laboffline --extension="bqplot" --name="bqplot"
   test:offline-pythreejs:
-    env_spec: _dev
+    env_spec: _hack
     unix: jupyter laboffline --extension="jupyter-threejs" --name="jupyter-threejs"
   test:offline-ipyvolume:
-    env_spec: _dev
+    env_spec: _hack
     unix: jupyter laboffline --extension="ipyvolume" --name="ipyvolume"
   posttest:teardown:
-    env_spec: _dev
+    env_spec: _hack
     unix: rm -rf ${CONDA_PREFIX}/share/jupyter
   test:
-    env_spec: _dev
+    env_spec: _hack
     unix: anaconda-project run posttest:teardown && anaconda-project run pretest:setup && anaconda-project run test:offline-base && anaconda-project run test:offline-widgets && anaconda-project run test:offline-bqplot
-
 
 channels:
 - conda-forge
@@ -64,13 +73,20 @@ env_specs:
     - _py
     packages:
     - conda-build ==2.1.8
+    - python >=3.6,<3.7
+
+  _hack:
+    inherit_from:
+      - _dev
+    packages:
     - diffoscope
     - hypothesis
     - pandas
-    - python >=3.6,<3.7
-    - nodejs
     - anaconda-project
     - sh
+    - nodejs
+    - giflib
+    - libpng
 
   _lab:
     packages:

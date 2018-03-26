@@ -12,7 +12,7 @@ build:
   number: 0
   script:
     - python -m pip install --no-deps --ignore-installed .
-    - jupyter laboffline
+    - python -m jupyterlab_offline.labofflineapp
   entry_points:
     - jupyter-laboffline = jupyterlab_offline.labofflineapp:main
 
@@ -21,6 +21,7 @@ requirements:
     - jupyterlab {{ version }}
     - nodejs
     - python
+    - pip
   run:
     - jupyterlab {{ version }}
 
