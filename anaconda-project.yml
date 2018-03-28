@@ -9,32 +9,37 @@ commands:
   build:
     description: build everything
     env_spec: _dev
-    unix: set -ex && anaconda-project run build:offline && anaconda-project run build:baseline && anaconda-project run build:ext
+    unix: set -ex && anaconda-project run build:offline && anaconda-project run build:baseline && anaconda-project run build:ext:npm && anaconda-project run build:ext:src
 
   build:offline:
     description: build the offline lab utilities package (python)
     env_spec: _dev
-    unix: cd recipes && conda build -c conda-forge jupyterlab-offline
+    unix: conda build -c conda-forge recipes/jupyterlab-offline
 
   build:baseline:
     description: build the jupyterlab core package (npm)
     env_spec: _dev
-    unix: cd recipes && conda-build -c conda-forge jupyterlab-offline-jupyterlab-application-top
+    unix: conda-build -c conda-forge recipes/jupyterlab-offline-jupyterlab-application-top
 
   build:ext:
-    description: build the offline labextension packages (npm)
-    env_spec: _dev
-    unix: set -ex && cd recipes && conda build -c conda-forge  jupyterlab-offline-jupyter-widgets-jupyterlab-manager
-      && conda build -c conda-forge jupyterlab-offline-bqplot && conda build -c conda-forge
-      jupyterlab-offline-ipyvolume && conda build -c conda-forge jupyterlab-offline-jupyter-threejs
-      && conda build -c conda-forge jupyterlab-offline-jupyter-leaflet && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab-toc && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab-drawio
+    description: build all offline labextension packages (npm)
+    unix: anaconda-project
 
-  build:graphviz:
+  build:ext:npm:
+    description: build offline labextension packages (npm)
     env_spec: _dev
-    unix: cd recipes && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab-graphviz
+    unix: set -ex && conda build -c conda-forge  recipes/jupyterlab-offline-jupyter-widgets-jupyterlab-manager
+      && conda build -c conda-forge recipes/jupyterlab-offline-bqplot && conda build -c conda-forge
+      recipes/jupyterlab-offline-ipyvolume && conda build -c conda-forge recipes/jupyterlab-offline-jupyter-threejs
+      && conda build -c conda-forge recipes/jupyterlab-offline-jupyter-leaflet && conda build
+      -c conda-forge recipes/jupyterlab-offline-jupyterlab-toc && conda build
+      -c conda-forge recipes/jupyterlab-offline-jupyterlab-drawio
+
+  build:ext:src:
+    env_spec: _dev
+    description: build offline labextension packages (src)
+    unix: conda build
+      -c conda-forge recipes/jupyterlab-offline-jupyterlab-graphviz
 
   build:voyager:
     env_spec: _dev

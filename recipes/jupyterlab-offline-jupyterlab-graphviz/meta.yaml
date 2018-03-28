@@ -17,12 +17,9 @@ source:
 build:
   number: 0
   script:
-    - ls -lathr
     - jlpm
     - jlpm build
-    - ls -lathr
-    - find .
-    - jupyter laboffline install .
+    - jupyter laboffline install --name jupyterlab_graphviz .
 
 test:
   commands:
