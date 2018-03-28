@@ -1,9 +1,6 @@
 {% set name = "jupyterlab-offline-bqplot" %}
 {% set version = "0.3.6" %}
 
-{% set jlab_min = "0.31" %}
-{% set jlab_max = "0.32" %}
-
 {% set jwm_min = "0.33.2" %}
 {% set jwm_max = "0.34" %}
 
@@ -13,22 +10,17 @@ package:
 
 build:
   number: 0
-  script:
-    - jupyter-laboffline archive --extension "bqplot@{{ version }}" --name bqplot
+  script: jupyter laboffline install bqplot {{ version }}
 
 test:
   commands:
-    - jupyter-laboffline build
+    - jupyter laboffline build
     - jupyter-labextension list
 
 requirements:
   build:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
-    - nodejs
-    - python
   run:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
 
 about:

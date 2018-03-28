@@ -1,5 +1,5 @@
 {% set name = "jupyterlab-offline" %}
-{% set version = "0.31.12" %}
+{% set version = "0.1.0" %}
 
 package:
   name: {{ name }}
@@ -12,23 +12,26 @@ build:
   number: 0
   script:
     - python -m pip install --no-deps --ignore-installed .
-    - python -m jupyterlab_offline.labofflineapp archive
   entry_points:
     - jupyter-laboffline = jupyterlab_offline.labofflineapp:main
 
 test:
   commands:
-    - jupyter-laboffline build
-    - jupyter-labextension list
+    - jupyter laboffline install --baseline
+    - jupyter laboffline install "@jupyter-widgets/jupyterlab-manager" "0.33.2"
+    - jupyter laboffline build
+    - jupyter labextension list
 
 requirements:
   build:
-    - jupyterlab {{ version }}
+    - jupyterlab
     - nodejs
     - python
     - pip
   run:
-    - jupyterlab {{ version }}
+    - jupyterlab
+    - nodejs
+    - python
 
 about:
   home: https://github.com/jupyterlab/jupyterlab

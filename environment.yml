@@ -1,8 +1,9 @@
-name: jupyterlab-offline
+name: jupyterlab-offline-dev
 
 channels:
+  - conda-forge
   - defaults
 
 dependencies:
-  - anaconda-project
+  - anaconda-project ==0.8.2
   - python >=3.6,<3.7

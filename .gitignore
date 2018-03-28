@@ -3,3 +3,5 @@ envs/
 .hypothesis/
 *.egg-info/
 __pycache__
+_notebooks/
+_features/

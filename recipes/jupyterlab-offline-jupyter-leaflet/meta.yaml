@@ -13,22 +13,17 @@ package:
 
 build:
   number: 0
-  script:
-    - jupyter-laboffline archive --extension "jupyter-leaflet@{{ version }}" --name jupyter-leaflet
+  script: jupyter laboffline install jupyter-leaflet {{ version }}
 
 test:
   commands:
-    - jupyter-laboffline build
+    - jupyter laboffline build
     - jupyter-labextension list
 
 requirements:
   build:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
-    - nodejs
-    - python
   run:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
 
 about:

@@ -1,52 +1,103 @@
-# Packaging JupyterLab for offline building
+# ☠️ EXPERIMENTAL ☠️ jupyterlab-offline
+> _(Re)build JupyterLab and Extensions Faster With More Energy, but without an npm registry_
 
-## User Story
-```gherkin
-   As an end end user,
-Given I have a package manager (e.g. pip, conda, apt, yum, etc.)
-  And I am not connected to the internet
- When I install a labextension
- Then it should build.
+> # ☠️ NO REALLY ☠️ THIS WILL MESS UP YOUR JUPYTERLAB ☠️
+
+# Features
+- [x] store yarn.lock and dependencies
+- [x] build static assets from offline lockfiles and dependencies
+- [x] scaffold command for conda recipe
+- [ ] better tests
+
+# Use cases
+- npm is down
+- you can't run your own npm repository
+
+# Alternative Approaches
+- provide a local npm repository
+
+  Could be `couchapp` or an alternative, lightweight, scope-enabled, npm-compatible registry
+
+  - pro
+    - doesn't need `git` (needed to merge lockfiles)
+    - probably more robust to minor semver changes
+  - meh
+    - still can't account for "missed-chance" duplication
+    - probably the same on disk
+  - con
+    - another port opened, probably...
+    - more node
+
+# Failure modes
+## Missed-chance duplication
+If...
+- package A requires version 1.1 and less than 1.3 or greater of B
+  - and bundles B@1.1
+- package C requires version 1.2 or greater of B
+  - and bundles B@1.3
+
+Then the one valid resolution (B@1.2) would not be in the offline cache.
+
+- Impact: build fails, requires manual intervention
+ (e.g. `conda remove last-thing`)
+- Likelihood: ??? (needs data)
+
+# Command-Line Usage
+## `jupyter laboffline build`
+Attempt to build the current JupyterLab application using only offline assets.
+These are usually put in `$APP_DIR/offline` by installing packages.
+
+## `jupyter laboffline install`
+Attempt to perform a clean install of the extension at that version, capturing
+its yarn.lock and npm dependencies.
+
+```bash
+jupyter laboffline install @jupyter-widgets/jupyterlab-manager 0.33.2
 ```
 
-## Motivation
-While **business, education, and science end-users** of JupyterLab want to write
-code, only a small proportion (e.g. IJavaScript kernel users vs all users) will
-have any interest in the NodeJS/npm ecosystem, and to the extent possible
-should be shielded from its quirks while having a robust interactive
-computational environment.
+Known dependencies should **already have been installed** through your package
+manager.
 
-Similarly, **extension developers** will likely be interested in supporting
-issues with _their_ code, not the explosion of interactions between different
-versions of **_n_-level-deep dependencies** failing to install, etc.
+## `jupyterlab-offline scaffold conda <@npm/name of extension> <simple semver>`
+Print out a scaffold `conda-build` `meta.yaml` for an extension
 
-Despite heroic efforts, we've ended up with a **highly extensible** application
-that requires a bootcamp degree in **full-stack web application development**
-to actually extend, especially when **things go wrong**.
+> TODO: explore pip option
 
-## Goal
-By making **JupyterLab extensions installable by "normal means,"** i.e. the
-package manager they used to install JupyterLab itself, **end users** will be
-more **quickly, reliably, and confidently** use a Lab ecosystem that
-**developers** will be able to support more **efficiently, simply, and
-robustly**.
+```bash
+git clone https://github.com/conda-forge/staged-recipes
+cd staged-recipes
+mkdir -p recipes/bqplot
+jupyterlab-offline scaffold conda bqplot 0.3.6 > recipes/bqplot/meta.yaml
+# Add already-packged upstreams with good semantic versioning
+# Make a PR!
+# Add it to your release automation
+# TODO: tie into bot
+```
 
-## Options
-### Option 0: Do nothing
-### Option 1: Consensus yarn offline mirror
-### Option 2: Run a local npm registry
+# API
 
-## Experiment: Option 1
-In this repo, we'll explore (initially) Option 1, packaging for
-`conda`. In addition to JupyterLab Core, we'll look at some key
-second- and third-party extensions:
-- `ipywidgets`: really first-party, but not included in `jupyterlab` by default (yet)
-- `bqplot`: a well-supported widget library that uses key dependencies like `d3`
-- `pythreejs`: a well-supported widget library that uses a heavy dependency, `three ^0.99.0`
-- `ipyvolume`: a well-supported widget library that also uses `three ^0.85.0`
+    TBD
 
-### Build `jupyterlab-offline(-*)`
-#### `jupyterlab-offline`
-This packages the entire build chain (`webpack`).
+# Installation
 
-####
+    TBD
+
+## Dependencies
+### `jupyterlab 0.31.12`
+`jupyterlab-offline` reuses much of the `jupyterlab` infrastructure, and its
+bundled package manager (`yarn` ne `jlpm`)
+
+### `git`
+`git` is needed to merge all of the yarn lockfiles together
+
+### `nodejs`
+`nodejs` is required to run `jupyterlab build`
+> Other JavaScript runtimes, e.g. PyMiniRacer, might be possible
+
+
+# Development
+```
+conda env update
+source activate jupyterlab-offline-dev
+anaconda-project run test # tbd
+```

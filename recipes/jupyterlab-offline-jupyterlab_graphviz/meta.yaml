@@ -1,0 +1,41 @@
+{% set name = "jupyterlab-offline-jupyterlab_graphviz" %}
+{% set version = "0.1.1" %}
+{% set jlab_min = "0.31" %}
+{% set jlab_max = "0.32" %}
+
+{% set commit = "582ce2f8fd6900304d5786fabdc12a2f3fb46442" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+
+source:
+  fn: {{ name }}-{{ commit }}.tar.gz
+  url: https://github.com/PhE/jupyterlab_graphviz/archive/{{ commit }}.tar.gz
+
+build:
+  number: 0
+  script:
+    - ls -lathr
+    - jlpm
+    - jlpm build
+    - ls -lathr
+    - find .
+    - jupyter laboffline install .
+
+test:
+  commands:
+    - jupyter laboffline build
+    - jupyter-labextension list
+
+requirements:
+  build:
+    - jupyterlab-offline-jupyterlab-application-top >={{ jlab_min }},<{{ jlab_max }}
+  run:
+    - jupyterlab-offline-jupyterlab-application-top >={{ jlab_min }},<{{ jlab_max }}
+
+about:
+  home: https://github.com/PhE/jupyterlab_graphviz
+  license: BSD-3-Clause
+  summary: Offline assets for building jupyterlab_graphviz for JupyterLab

@@ -10,23 +10,18 @@ package:
 
 build:
   number: 0
-  script:
-    - jupyter-laboffline archive --extension "jupyterlab-toc@{{ version }}" --name jupyterlab-toc
+  script: jupyter laboffline install jupyterlab-toc {{ version }}
 
 test:
   commands:
-    - jupyter-laboffline build
+    - jupyter laboffline build
     - jupyter-labextension list
 
 requirements:
   build:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
-    - nodejs
-    - python
+    - jupyterlab-offline-jupyterlab-application-top >={{ jlab_min }},<{{ jlab_max }}
   run:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
-    - nodejs
-    - python
+    - jupyterlab-offline-jupyterlab-application-top >={{ jlab_min }},<{{ jlab_max }}
 
 about:
   home: https://github.com/ian-r-rose/jupyterlab-toc

@@ -13,22 +13,17 @@ package:
 
 build:
   number: 0
-  script:
-    - jupyter-laboffline archive --extension "ipyvolume@{{ version }}" --name ipyvolume
+  script: jupyter laboffline install ipyvolume {{ version }}
 
 test:
   commands:
-    - jupyter-laboffline build
+    - jupyter laboffline build
     - jupyter-labextension list
 
 requirements:
   build:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
-    - nodejs
-    - python
   run:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager >={{ jwm_min }},<{{ jwm_max }}
 
 about:

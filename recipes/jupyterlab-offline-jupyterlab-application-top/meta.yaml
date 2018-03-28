@@ -1,0 +1,32 @@
+{% set name = "jupyterlab-offline-jupyterlab-application-top" %}
+# unlike every other package, this is pinned to the conda version of jupyterlab
+# not the npm version of `@jupyterlab/application-top`
+{% set version = "0.31.12" %}
+
+package:
+  name: {{ name }}
+  version: {{ version }}
+
+build:
+  number: 0
+  script: jupyter laboffline install --baseline
+
+test:
+  commands:
+    - jupyter laboffline build
+
+requirements:
+  build:
+    - jupyterlab {{ version }}
+    - jupyterlab-offline
+    - nodejs
+    - python
+    - pip
+  run:
+    - jupyterlab {{ version }}
+    - jupyterlab-offline
+
+about:
+  home: https://github.com/jupyterlab/jupyterlab
+  license: BSD 3-Clause
+  summary: Offline assets and build chain for building JupyterLab

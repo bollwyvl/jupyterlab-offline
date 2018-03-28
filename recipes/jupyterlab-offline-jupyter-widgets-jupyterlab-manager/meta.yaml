@@ -10,23 +10,18 @@ package:
 
 build:
   number: 0
-  script:
-    - jupyter-laboffline archive --extension "@jupyter-widgets/jupyterlab-manager@{{ version }}" --name jupyter-widgets-jupyterlab-manager
+  script: jupyter laboffline install "@jupyter-widgets/jupyterlab-manager" {{ version }}
 
 test:
   commands:
-    - jupyter-laboffline build
+    - jupyter laboffline build
     - jupyter-labextension list
 
 requirements:
   build:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
-    - nodejs
-    - python
+    - jupyterlab-offline-jupyterlab-application-top >={{ jlab_min }},<{{ jlab_max }}
   run:
-    - jupyterlab-offline >={{ jlab_min }},<{{ jlab_max }}
-    - nodejs
-    - python
+    - jupyterlab-offline-jupyterlab-application-top >={{ jlab_min }},<{{ jlab_max }}
 
 about:
   home: https://github.com/jupyter-widgets/ipywidgets
