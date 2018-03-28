@@ -35,7 +35,12 @@ commands:
   build:graphviz:
     env_spec: _dev
     unix: cd recipes && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab_graphviz
+      -c conda-forge jupyterlab-offline-jupyterlab-graphviz
+
+  build:voyager:
+    env_spec: _dev
+    unix: cd recipes && conda build
+      -c conda-forge jupyterlab-offline-jupyterlab-voyager
 
   pretest:setup:
     env_spec: _hack

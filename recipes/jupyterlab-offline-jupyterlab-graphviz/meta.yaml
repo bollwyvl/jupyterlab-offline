@@ -1,4 +1,4 @@
-{% set name = "jupyterlab-offline-jupyterlab_graphviz" %}
+{% set name = "jupyterlab-offline-jupyterlab-graphviz" %}
 {% set version = "0.1.1" %}
 {% set jlab_min = "0.31" %}
 {% set jlab_max = "0.32" %}
