@@ -83,7 +83,10 @@ def archive_extension(extension_package=None, extension_name=None,
                         len(before),
                         extension_name or "base")
             logger.info("Installing %s", extension_package)
-        install_extension(extension_package, extension_semver, **kw)
+        install_extension(extension_package=extension_package,
+                          extension_semver=extension_semver,
+                          extension_name=extension_name,
+                          **kw)
         populate_staging(**kw)
     else:
         stage_baseline_yarn_lock(**kw)
