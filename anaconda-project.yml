@@ -29,8 +29,7 @@ commands:
       jupyterlab-offline-ipyvolume && conda build -c conda-forge jupyterlab-offline-jupyter-threejs
       && conda build -c conda-forge jupyterlab-offline-jupyter-leaflet && conda build
       -c conda-forge jupyterlab-offline-jupyterlab-toc && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab-drawio && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab-voyager
+      -c conda-forge jupyterlab-offline-jupyterlab-drawio
 
   build:graphviz:
     env_spec: _dev
