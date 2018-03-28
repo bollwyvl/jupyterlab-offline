@@ -6,6 +6,10 @@ commands:
     unix: jupyter lab --no-browser --debug
     env_spec: user
 
+  conda-build:
+    env_spec: _dev
+    unix: conda-build
+
   build:
     description: build everything
     env_spec: _dev
@@ -20,10 +24,6 @@ commands:
     description: build the jupyterlab core package (npm)
     env_spec: _dev
     unix: conda-build -c conda-forge recipes/jupyterlab-offline-jupyterlab-application-top
-
-  build:ext:
-    description: build all offline labextension packages (npm)
-    unix: anaconda-project
 
   build:ext:npm:
     description: build offline labextension packages (npm)
@@ -40,11 +40,6 @@ commands:
     description: build offline labextension packages (src)
     unix: conda build
       -c conda-forge recipes/jupyterlab-offline-jupyterlab-graphviz
-
-  build:voyager:
-    env_spec: _dev
-    unix: cd recipes && conda build
-      -c conda-forge jupyterlab-offline-jupyterlab-voyager
 
   pretest:setup:
     env_spec: _hack
@@ -113,19 +108,28 @@ env_specs:
     - _lab
     - _py
 
+  user-graphviz:
+    inherit_from:
+    - user
+    packages:
+    - jupyterlab-offline
+    - jupyterlab-offline-jupyterlab-graphviz
+    - jupyterlab-offline-jupyterlab-toc
+    - jupyterlab-offline-jupyterlab-drawio
+
   user-sink:
     inherit_from:
     - user
     packages:
     - bqplot
-    # - ipyleaflet
+    - ipyleaflet
     - pythreejs
     - ipyvolume
     - ipywidgets
     - jupyterlab-offline
     - jupyterlab-offline-bqplot
     - jupyterlab-offline-ipyvolume
-    # - jupyterlab-offline-jupyter-leaflet
+    - jupyterlab-offline-jupyter-leaflet
     - jupyterlab-offline-jupyter-threejs
     - jupyterlab-offline-jupyter-widgets-jupyterlab-manager
     - jupyterlab-offline-jupyterlab-toc

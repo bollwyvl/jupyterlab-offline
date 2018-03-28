@@ -136,6 +136,7 @@ class OfflineBuildApp(JupyterApp):
     def start(self):
         kwargs = dict(
             app_dir=self.app_dir,
+            logger=self.log,
         )
         commands.build(**kwargs)
 

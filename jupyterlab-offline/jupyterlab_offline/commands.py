@@ -44,9 +44,9 @@ def build(app_dir=None, logger=None):
     if logger:
         offline_extensions = list(glob(join(app_dir, OFFLINE, EXTENSIONS)))
         logger.info(
-            "Attempting offline build for core and %s extensions:\n%s",
+            "Attempting offline build for core and %s extensions:\n\t- %s",
             len(offline_extensions),
-            offline_extensions
+            "\n\t- ".join(offline_extensions)
         )
 
     populate_staging(offline=True, **kw)
@@ -210,12 +210,12 @@ def stage_baseline_yarn_lock(app_dir=None, logger=None):
     shutil.copy2(baseline, staging)
 
 
-def raw_build(app_dir=None, logger=None):
+def raw_build(app_dir=None, logger=None, dev_mode=False):
     app_dir = app_dir or commands.get_app_dir()
     if logger:
-        logger.info("Running raw webpack in `%s/staging`", app_dir)
+        logger.info("Running raw webpack in `staging`")
     return subprocess.check_output(
-        ["jlpm", "build"],
+        ["jlpm", "build" if dev_mode else "build:prod"],
         cwd=join(app_dir, STAGING)
     )
 
@@ -250,14 +250,16 @@ def record_packages(app_dir=None, logger=None):
     return packages
 
 
-def install_extension(extension_package, extension_semver, app_dir=None,
+def install_extension(extension_package, extension_semver,
+                      extension_name, app_dir=None,
                       logger=None):
     spec = (
         "{}@{}".format(extension_package, extension_semver)
         if extension_semver is not None
         else extension_package)
     if logger:
-        logger.info("Installing %s", spec)
+        logger.info("Installing `%s` to `offline/extensions/%s`",
+                    extension_name, spec)
     if extension_package:
         return commands.install_extension(spec,
                                           app_dir=app_dir,
